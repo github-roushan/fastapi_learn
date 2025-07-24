@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 @dataclass
 class Book:
@@ -12,6 +12,7 @@ class Book:
     rating: int
 
 class BookRequest(BaseModel):
+     id: Optional[int] = None
      title: str = Field(min_length=3)
      author: str = Field(min_length=1)
      description: str = Field(min_length=1, max_length=100)
@@ -84,14 +85,12 @@ async def get_all_books():
 
 @app.post("/books/create_book")
 async def create_book(book_request: BookRequest):
-     request_dict = book_request.model_dump()
-     print(request_dict)
-     add_id_to_book(request_dict)
-     new_book = Book(**request_dict)
+     new_book = Book(**book_request.model_dump())
+     add_id_to_book(new_book)
      BOOKS.append(new_book)
      return {"status": "success", "message": "Book created successfully"}
 
-def add_id_to_book(request):
+def add_id_to_book(book: Book):
      global NEXT_ID
      NEXT_ID += 1
-     request["id"] = NEXT_ID
+     book.id = NEXT_ID

@@ -18,6 +18,17 @@ class BookRequest(BaseModel):
      description: str = Field(min_length=1, max_length=100)
      rating: int = Field(gt=-1, lt=6)
 
+     model_config = {
+          "json_schema_extra" : {
+               "example": {
+                    "title": "FastAPI: CookBook",
+                    "author": "Intro To FastAPI",
+                    "description": "Get Up and Going with FastAPI",
+                    "rating": 5
+               }
+          }
+     }
+
 
 BOOKS: List["Book"] = [
     Book(1,
@@ -82,7 +93,7 @@ app = FastAPI()
 @app.get("/books")
 async def get_all_books():
      return BOOKS
-
+          
 @app.post("/books/create_book")
 async def create_book(book_request: BookRequest):
      new_book = Book(**book_request.model_dump())

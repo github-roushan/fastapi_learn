@@ -20,8 +20,8 @@ class BookRequest(BaseModel):
      rating: int = Field(gt=-1, lt=6)
      published_book: int = Field(gt=0)
 
-     model_config = {
-          "json_schema_extra" : {
+     class Config:
+          schema_extra = {
                "example": {
                     "title": "FastAPI: CookBook",
                     "author": "Intro To FastAPI",
@@ -30,7 +30,6 @@ class BookRequest(BaseModel):
                     "published_date": 1997
                }
           }
-     }
 
 BOOKS: List["Book"] = [
     Book(1, "Dune", "Frank Herbert",

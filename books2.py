@@ -120,3 +120,21 @@ def add_id_to_book(book: Book):
      global NEXT_ID
      NEXT_ID += 1
      book.id = NEXT_ID
+
+@app.put("/books/update_book")
+async def update_book(book_request: BookRequest):
+     updated_book = Book(**book_request.model_dump())
+     for ind, book in enumerate(BOOKS):
+          if book.id == updated_book.id:
+               BOOKS[ind] = updated_book
+               return {"status": 201, "message": "Book Updated"}
+     return {"status": 404, "message": "Book Not Found"}
+
+
+@app.delete("/books/{book_id}")
+async def delete_book(book_id: int):
+     for i in range(len(BOOKS)):
+          if BOOKS[i].id == book_id:
+               BOOKS.pop(i)
+               return {"status": 200, "message": "Book Deleted"}
+     return {"status": 404, "message": "Book Not Found"}

@@ -10,6 +10,7 @@ class Book:
     author: str
     description: str
     rating: int
+    published_year: int
 
 class BookRequest(BaseModel):
      id: Optional[int] = Field(description="Id is not needed on create", default=None)
@@ -17,6 +18,7 @@ class BookRequest(BaseModel):
      author: str = Field(min_length=1)
      description: str = Field(min_length=1, max_length=100)
      rating: int = Field(gt=-1, lt=6)
+     published_book: int = Field(gt=0)
 
      model_config = {
           "json_schema_extra" : {
@@ -24,69 +26,48 @@ class BookRequest(BaseModel):
                     "title": "FastAPI: CookBook",
                     "author": "Intro To FastAPI",
                     "description": "Get Up and Going with FastAPI",
-                    "rating": 5
+                    "rating": 5,
+                    "published_date": 1997
                }
           }
      }
 
-
 BOOKS: List["Book"] = [
-    Book(1,
-         "Dune",
-         "Frank Herbert",
+    Book(1, "Dune", "Frank Herbert",
          "A richly detailed epic about politics, religion, and ecology on the desert planet Arrakis—considered one of the greatest sci‑fi novels of all time.",
-         5),
-    Book(2,
-         "Sapiens: A Brief History of Humankind",
-         "Yuval Noah Harari",
+         5, 1965),
+    Book(2, "Sapiens: A Brief History of Humankind", "Yuval Noah Harari",
          "A sweeping, accessible exploration of human evolution, societies, and how our species shaped the world.",
-         4),
-    Book(3,
-         "To Kill a Mockingbird",
-         "Harper Lee",
+         4, 2011),
+    Book(3, "To Kill a Mockingbird", "Harper Lee",
          "A powerful classic of racial injustice and moral growth in the American South, seen through a child's eyes.",
-         5),
-    Book(4,
-         "1984",
-         "George Orwell",
+         5, 1960),
+    Book(4, "1984", "George Orwell",
          "A chilling dystopia about total surveillance and oppressive power—still eerily relevant today.",
-         5),
-    Book(5,
-         "The Name of the Wind",
-         "Patrick Rothfuss",
+         5, 1949),
+    Book(5, "The Name of the Wind", "Patrick Rothfuss",
          "The lyrical and immersive first‑person tale of Kvothe’s childhood, magic-training, and quest for revenge.",
-         4),
-    Book(6,
-         "The Midnight Library",
-         "Matt Haig",
+         4, 2007),
+    Book(6, "The Midnight Library", "Matt Haig",
          "A touching, philosophical novel exploring regret and the many paths a life can take via a magical library.",
-         4),
-    Book(7,
-         "Educated",
-         "Tara Westover",
+         4, 2020),
+    Book(7, "Educated", "Tara Westover",
          "A gripping memoir of a woman who escaped a survivalist upbringing through education and self-discovery.",
-         5),
-    Book(8,
-         "Project Hail Mary",
-         "Andy Weir",
-         "A thrilling, science‑heavy space adventure where a lone astronaut must save Earth—with humor, technical ingenuity, and an alien companion Rocky. Critics called it a science‑fiction “masterwork” balanced with engaging narrative and friendship dynamics :contentReference[oaicite:1]{index=1}.",
-         5),
-    Book(9,
-         "The Silent Patient",
-         "Alex Michaelides",
+         5, 2018),
+    Book(8, "Project Hail Mary", "Andy Weir",
+         "A thrilling, science‑heavy space adventure where a lone astronaut must save Earth—with humor, technical ingenuity, and an alien companion Rocky.",
+         5, 2021),
+    Book(9, "The Silent Patient", "Alex Michaelides",
          "A tense psychological thriller about a woman who stops speaking after shooting her husband—and the psychotherapist obsessed with uncovering why.",
-         4),
-    Book(10,
-         "The Alchemist",
-         "Paulo Coelho",
+         4, 2019),
+    Book(10, "The Alchemist", "Paulo Coelho",
          "A modern allegory about following your dreams filled with mystical encounters and insights on destiny.",
-         4),
-    Book(11,
-         "Children of Dune",
-         "Frank Herbert",
+         4, 1988),
+    Book(11, "Children of Dune", "Frank Herbert",
          "The continued saga of Paul Atreides’ legacy as Arrakis descends into political and religious upheaval.",
-         4)
+         4, 1976)
 ]
+
 NEXT_ID = len(BOOKS)
 
 app = FastAPI()
@@ -105,6 +86,15 @@ async def get_books_by_rating(book_rating: int):
      books_to_return = []
      for book in BOOKS:
           if book.rating == book_rating:
+               books_to_return.append(book)
+     
+     return books_to_return
+
+@app.get("/books/year/")
+async def get_books_by_published_year(published_year: int):
+     books_to_return = []
+     for book in BOOKS:
+          if book.published_year == published_year:
                books_to_return.append(book)
      
      return books_to_return

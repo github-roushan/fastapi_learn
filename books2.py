@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI, Path, Query, HTTPException, status
 from pydantic import BaseModel, Field
 from dataclasses import dataclass
 from typing import List, Optional
@@ -18,10 +18,10 @@ class BookRequest(BaseModel):
      author: str = Field(min_length=1)
      description: str = Field(min_length=1, max_length=100)
      rating: int = Field(gt=-1, lt=6)
-     published_book: int = Field(gt=0)
+     published_year: int = Field(gt=0)
 
      class Config:
-          schema_extra = {
+          json_schema_extra = {
                "example": {
                     "title": "FastAPI: CookBook",
                     "author": "Intro To FastAPI",
@@ -70,60 +70,53 @@ BOOKS: List["Book"] = [
 NEXT_ID = len(BOOKS)
 
 app = FastAPI()
-@app.get("/books")
+@app.get("/books", status_code=status.HTTP_200_OK)
 async def get_all_books():
      return BOOKS
 
-@app.get("/books/{book_id}")
+@app.get("/books/{book_id}", status_code=status.HTTP_200_OK)
 async def get_book_by_id(book_id: int = Path(gt=0)):
-     for book in BOOKS:
-          if book.id == book_id:
-               return book
+    for book in BOOKS:
+        if book.id == book_id:
+            return book
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
-@app.get("/books/")
+@app.get("/books/", status_code=status.HTTP_200_OK)
 async def get_books_by_rating(book_rating: int = Query(gt=0, lt=6)):
-     books_to_return = []
-     for book in BOOKS:
-          if book.rating == book_rating:
-               books_to_return.append(book)
-     
-     return books_to_return
+    books_to_return = [book for book in BOOKS if book.rating == book_rating]
+    return books_to_return
 
-@app.get("/books/year/")
+@app.get("/books/year/", status_code=status.HTTP_200_OK)
 async def get_books_by_published_year(published_year: int = Query(gt=1929)):
-     books_to_return = []
-     for book in BOOKS:
-          if book.published_year == published_year:
-               books_to_return.append(book)
-     
-     return books_to_return
+    books_to_return = [book for book in BOOKS if book.published_year == published_year]
+    return books_to_return
 
-@app.post("/books/create_book")
+@app.post("/books/create_book", status_code=status.HTTP_201_CREATED)
 async def create_book(book_request: BookRequest):
-     new_book = Book(**book_request.model_dump())
-     add_id_to_book(new_book)
-     BOOKS.append(new_book)
-     return {"status": "success", "message": "Book created successfully"}
+    new_book = Book(**book_request.model_dump())
+    add_id_to_book(new_book)
+    BOOKS.append(new_book)
+    return {"message": "Book created successfully"}
 
 def add_id_to_book(book: Book):
      global NEXT_ID
      NEXT_ID += 1
      book.id = NEXT_ID
 
-@app.put("/books/update_book")
+@app.put("/books/update_book", status_code=status.HTTP_200_OK)
 async def update_book(book_request: BookRequest):
      updated_book = Book(**book_request.model_dump())
      for ind, book in enumerate(BOOKS):
           if book.id == updated_book.id:
                BOOKS[ind] = updated_book
-               return {"status": 201, "message": "Book Updated"}
-     return {"status": 404, "message": "Book Not Found"}
+               return {"message": "Book updated successfully"}
+     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
 
-@app.delete("/books/{book_id}")
+@app.delete("/books/{book_id}", status_code=status.HTTP_200_OK)
 async def delete_book(book_id: int = Path(gt=0)):
      for i in range(len(BOOKS)):
           if BOOKS[i].id == book_id:
                BOOKS.pop(i)
-               return {"status": 200, "message": "Book Deleted"}
-     return {"status": 404, "message": "Book Not Found"}
+               return {"message": "Book deleted successfully"}
+     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")

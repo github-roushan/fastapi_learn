@@ -24,7 +24,7 @@ class BookRequest(BaseModel):
           json_schema_extra = {
                "example": {
                     "title": "FastAPI: CookBook",
-                    "author": "Intro To FastAPI",
+                    "author": "Roushan Singh",
                     "description": "Get Up and Going with FastAPI",
                     "rating": 5,
                     "published_date": 1997

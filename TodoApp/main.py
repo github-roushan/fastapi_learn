@@ -4,10 +4,12 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from models import Todos, Base
 from database import engine, SessionLocal
+from routers import auth
 
 app = FastAPI()
 
 Base.metadata.create_all(bind = engine)
+app.include_router(auth.router)
 
 def get_db():
     db = SessionLocal()

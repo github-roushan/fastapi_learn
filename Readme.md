@@ -31,10 +31,10 @@ python -m venv venv
 
 ### 3. Install Dependencies
 
-Install the required Python packages, FastAPI for the framework and Uvicorn to run the server.
+Install the required Python packages from the `requirements.txt` file.
 
 ```bash
-pip install fastapi "uvicorn[standard]"
+pip install -r requirements.txt
 ```
 
 ### 4. Running the API Server
@@ -43,7 +43,7 @@ You can run any of the project files using `uvicorn`. The command specifies the 
 
 For example, to run the `books.py` project:
 ```bash
-uvicorn books:app --reload
+uvicorn BooksApp.books1:app --reload
 ```
 The server will start, typically on `http://127.0.0.1:8000`. You can access the interactive API documentation at `http://127.0.0.1:8000/docs` and the alternative documentation at `http://127.0.0.1:8000/redoc`.
 
@@ -51,15 +51,45 @@ The server will start, typically on `http://127.0.0.1:8000`. You can access the 
 
 ## Projects Index
 
-1.  Book Management API (`books.py`)
+1.  **Book Management API (`BooksApp/`)**
+    *   `books1.py`: A basic implementation of a book management API.
+    *   `books2.py`: A more advanced version with data validation using Pydantic.
+2.  **Todo Application (`TodoApp/`)**
+    *   A complete to-do list application with a database and user authentication.
 
 ---
 
-### Book Management API (`books.py`)
+### Book Management API (`BooksApp/`)
 
-This project is a simple RESTful API for managing a collection of books. It demonstrates fundamental FastAPI concepts including:
+This project demonstrates fundamental FastAPI concepts through two iterations of a book management API.
+
+#### `books1.py`
+
+A simple RESTful API for managing a collection of books. It covers:
 
 *   **Path and Query Parameters:** Fetching data based on URL paths (`/books/id/1`) and query strings (`/books/?category=Science%20Fiction`).
 *   **Request Body:** Creating and updating data using `POST` and `PUT` requests.
 *   **CRUD Operations:** Implementing Create, Read, Update, and Delete functionalities for the book collection.
 *   **In-memory "database":** Uses a simple Python list to store book data for the lifetime of the application instance.
+
+#### `books2.py`
+
+This version enhances the book management API by introducing:
+
+*   **Pydantic Models:** For robust request body validation and data serialization.
+*   **Data Classes:** To define the structure of the book data.
+*   **Path and Query Validation:** Ensuring that path and query parameters meet specified criteria (e.g., greater than 0).
+*   **HTTP Exceptions:** Providing more informative error responses.
+*   **Status Codes:** Returning appropriate HTTP status codes for different operations.
+
+### Todo Application (`TodoApp/`)
+
+A full-featured to-do list application that demonstrates a more structured and production-ready approach to building FastAPI applications. Key features include:
+
+*   **Database Integration:** Uses SQLAlchemy to interact with a SQLite database for persistent data storage.
+*   **User Authentication:** Implements JWT-based authentication to secure endpoints and manage user sessions.
+*   **Password Hashing:** Securely stores user passwords using `passlib`.
+*   **API Routers:** Organizes endpoints into separate modules for better code structure (`auth.py` and `todos.py`).
+*   **Dependency Injection:** Manages database sessions and user dependencies effectively.
+*   **CRUD Operations:** Allows authenticated users to create, read, update, and delete their own to-do items.
+*   **Environment Variables:** Manages application secrets and configurations using a `.env` file.

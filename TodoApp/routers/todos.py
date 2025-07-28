@@ -26,8 +26,8 @@ class TodoRequest(BaseModel):
         }
 
 @router.get("/all")
-async def get_all_todos(db: db_dependency):
-    return db.query(Todos).all()
+async def get_all_todos(db: db_dependency, user: user_dependency):
+    return db.query(Todos).filter(Todos.owner_id == user.get("id")).all()
 
 @router.get("/{todo_id}", status_code=status.HTTP_200_OK)
 async def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
@@ -49,7 +49,7 @@ async def update_todo(db: db_dependency, todo_request: TodoRequest, todo_id: int
     if todo_model is None:
         raise HTTPException(status_code=404, detail=f"No Such Todo with id: {todo_id}")
 
-    for key, value in todo_request.dict().items():
+    for key, value in todo_request.model_dump().items():
         setattr(todo_model, key, value)
 
     db.commit()

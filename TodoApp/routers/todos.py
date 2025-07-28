@@ -32,7 +32,7 @@ async def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
         return todo_model
     raise HTTPException(status_code=404, detail=f"Todo With id: {todo_id} not found")
 
-@router.post("/create_todo", status_code=status.HTTP_200_OK)
+@router.post("/create_todo", status_code=status.HTTP_201_CREATED)
 async def create_todo(todo_model: TodoRequest, db: db_dependency):
     todo_model = Todos(**todo_model.model_dump())
     db.add(todo_model)

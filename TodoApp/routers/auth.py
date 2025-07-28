@@ -109,3 +109,7 @@ async def generate_access_token(form_data: Annotated[OAuth2PasswordRequestForm, 
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail = "Invalid Username or password"
     )
+
+@router.get("/list/users", status_code = status.HTTP_200_OK)
+async def get_all_users(db: db_dependency):
+    return db.query(Users).all()

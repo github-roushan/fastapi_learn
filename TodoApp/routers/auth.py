@@ -9,13 +9,14 @@ from jose import JWTError, jwt
 import os
 from dotenv import load_dotenv
 from models import RoleEnum
+from settings import BASE_DIR
 
 router = APIRouter(
     prefix = "/auth",
     tags = ["Auth"]
 )
 
-load_dotenv()
+load_dotenv(dotenv_path=f"{BASE_DIR}/.env")
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv("ALGORITHM")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token/generate")

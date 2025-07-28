@@ -3,14 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from models import Users
-from hashlib import md5
 from utils import db_dependency, bcrypt_context
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from enum import Enum
 from jose import JWTError, jwt
 import os
 from dotenv import load_dotenv
-
+from models import RoleEnum
 
 router = APIRouter(
     prefix = "/auth",
@@ -21,12 +19,6 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv("ALGORITHM")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token/generate")
-
-class RoleEnum(str, Enum):
-    ten_x = "10x"
-    admin = "admin"
-    prime = "prime"
-    normal = "normal"
 
 class CreateUserRequest(BaseModel):
     username: str

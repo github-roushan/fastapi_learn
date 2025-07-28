@@ -51,8 +51,8 @@ def authenticate_user(username: str, password: str, db):
             return True,user
     return False, None
 
-def create_access_token(username: str, user_id: int, time_to_live: timedelta):
-    encode = {"sub": username, 'id': user_id}
+def create_access_token(username: str, user_id: int, role: str, time_to_live: timedelta):
+    encode = {"sub": username, 'id': user_id, 'role': role}
     expires = datetime.now(timezone.utc) + time_to_live
     encode['exp'] = expires
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -96,7 +96,7 @@ async def create_user(create_user_req: CreateUserRequest, db: db_dependency):
 async def generate_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     is_authenticated, user = authenticate_user(form_data.username, form_data.password, db)
     if is_authenticated:
-        token = create_access_token(user.username, user.id, timedelta(minutes=30))
+        token = create_access_token(user.username, user.id, user.role.value, timedelta(minutes=30))
         return {"access_token": token, "token_type":"Bearer"}
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

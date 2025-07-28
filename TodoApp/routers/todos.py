@@ -30,8 +30,11 @@ async def get_all_todos(db: db_dependency, user: user_dependency):
     return db.query(Todos).filter(Todos.owner_id == user.get("id")).all()
 
 @router.get("/{todo_id}", status_code=status.HTTP_200_OK)
-async def get_todo_by_id(db: db_dependency, todo_id: int = Path(gt=0)):
-    todo_model = db.query(Todos).filter(Todos.id == todo_id).first()
+async def get_todo_by_id(db: db_dependency, user: user_dependency, todo_id: int = Path(gt=0)):
+    todo_model = db.query(Todos).filter(
+        Todos.id == todo_id, 
+        Todos.owner_id == user.get("id")
+    ).first()
     if todo_model is not None:
         return todo_model
     raise HTTPException(status_code=404, detail=f"Todo With id: {todo_id} not found")
@@ -44,8 +47,11 @@ async def create_todo(todo_model: TodoRequest, db: db_dependency, user: user_dep
     return {"detail": "Added a todo"}
 
 @router.put("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_todo(db: db_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
-    todo_model = db.query(Todos).filter(Todos.id == todo_id).first()
+async def update_todo(db: db_dependency, user: user_dependency, todo_request: TodoRequest, todo_id: int = Path(gt=0)):
+    todo_model = db.query(Todos).filter(
+        Todos.id == todo_id,
+        Todos.owner_id == user.get("id")
+    ).first()
     if todo_model is None:
         raise HTTPException(status_code=404, detail=f"No Such Todo with id: {todo_id}")
 
@@ -55,8 +61,11 @@ async def update_todo(db: db_dependency, todo_request: TodoRequest, todo_id: int
     db.commit()
 
 @router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo(db: db_dependency, todo_id: int = Path(gt=0)):
-    query_result = db.query(Todos).filter(Todos.id == todo_id).delete()
+async def delete_todo(db: db_dependency, user: user_dependency, todo_id: int = Path(gt=0)):
+    query_result = db.query(Todos).filter(
+                        Todos.id == todo_id, 
+                        Todos.owner_id == user.get("id")
+                    ).delete()
     if query_result == 0:
         raise HTTPException(
             status_code=404,

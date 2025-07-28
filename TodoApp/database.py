@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 import pathlib
 BASE_DIR = pathlib.Path(__file__).parent
-SQLALCHEMY_DATABASE_URL = f'sqlite:///{BASE_DIR}/todos.db'
+SQLALCHEMY_DATABASE_URL = f'sqlite:///{BASE_DIR}/todosapp.db'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False})
 

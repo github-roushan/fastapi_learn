@@ -1,7 +1,14 @@
 from database import Base
-from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Enum
+from sqlalchemy.sql.type_api import TypeEngine
 import json
+import enum
 
+class RoleEnum(str, enum.Enum):
+    TEN_X = "10x"
+    ADMIN = "admin"
+    PRIME = "prime"
+    NORMAL = "normal"
 
 class Users(Base):
     __tablename__ = 'users'
@@ -12,7 +19,7 @@ class Users(Base):
     last_name = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    role = Column(String)
+    role = Column(Enum(RoleEnum), default=Enum(RoleEnum.ADMIN))
 
     def __repr__(self):
         # Create a dictionary of the object attributes

@@ -9,6 +9,7 @@ class RoleEnum(str, enum.Enum):
     ADMIN = "admin"
     PRIME = "prime"
     NORMAL = "normal"
+    TESTER = "tester"
 
 class Users(Base):
     __tablename__ = 'users'

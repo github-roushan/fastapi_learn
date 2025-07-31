@@ -7,16 +7,14 @@ from utils import db_dependency, bcrypt_context
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import JWTError, jwt
 import os
-from dotenv import load_dotenv
+
 from models import RoleEnum
-from settings import BASE_DIR
 
 router = APIRouter(
     prefix = "/auth",
     tags = ["Auth"]
 )
 
-load_dotenv(dotenv_path=f"{BASE_DIR}/.env")
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv("ALGORITHM")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token/generate")
@@ -32,12 +30,12 @@ class CreateUserRequest(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "username": "username",
-                "email": "email@xyz.com",
+                "username": "alienx",
+                "email": "alan.turing@xyz.com",
                 "first_name": "Alan",
                 "last_name": "Turing",
                 "password": "pass123",
-                "role": "admin"
+                "role": RoleEnum.TEN_X.value
             }
         }
 
